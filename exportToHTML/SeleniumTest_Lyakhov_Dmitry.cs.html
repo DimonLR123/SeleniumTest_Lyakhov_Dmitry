@@ -1,0 +1,66 @@
+<html>
+<head>
+<title>SeleniumTest_Lyakhov_Dmitry.cs</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #85c46c; font-style: italic;}
+.s1 { color: #d0d0d0;}
+.s2 { color: #6c95eb;}
+.s3 { color: #bdbdbd;}
+.s4 { color: #c9a26d;}
+.s5 { color: #ed94c0;}
+</style>
+</head>
+<body bgcolor="#262626">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+SeleniumTest_Lyakhov_Dmitry.cs</font>
+</center></td></tr></table>
+<pre><span class="s0">//using NUnit.Framework;</span>
+
+<span class="s2">using </span><span class="s1">NUnit</span><span class="s3">.</span><span class="s1">Framework</span><span class="s3">;</span>
+<span class="s2">using </span><span class="s1">OpenQA</span><span class="s3">.</span><span class="s1">Selenium</span><span class="s3">.</span><span class="s1">Chrome</span><span class="s3">;</span>
+
+<span class="s2">namespace </span><span class="s1">SeleniumUnitTest_Lyakhov_Dmitry</span><span class="s3">;</span>
+        
+        <span class="s0">//[TestFixture]</span>
+        <span class="s2">public class </span><span class="s1">SeleniumTestFor</span>
+        <span class="s3">{</span>
+            <span class="s3">[</span><span class="s1">Test</span><span class="s3">]</span>
+            <span class="s2">public void </span><span class="s1">Authorization</span><span class="s3">()</span>
+            <span class="s3">{</span>
+                <span class="s1">var options </span><span class="s3">= </span><span class="s2">new </span><span class="s1">ChromeOptions</span><span class="s3">();</span>
+                <span class="s1">options</span><span class="s3">.</span><span class="s1">AddArguments</span><span class="s3">(</span><span class="s4">&quot;--no-sandbox&quot;</span><span class="s3">, </span><span class="s4">&quot;--start-maximized&quot;</span><span class="s3">, </span><span class="s4">&quot;--disable-extensions&quot;</span><span class="s3">);</span>
+                <span class="s0">// зайти в хром (с помощью вебдрайвера)</span>
+                <span class="s1">var driver </span><span class="s3">= </span><span class="s2">new </span><span class="s1">ChromeDriver</span><span class="s3">(</span><span class="s1">options</span><span class="s3">);</span>
+                
+                <span class="s0">// перейти по URL</span>
+                <span class="s1">driver</span><span class="s3">.</span><span class="s1">Navigate</span><span class="s3">().</span><span class="s1">GoToUrl</span><span class="s3">(</span><span class="s4">&quot;https://staff-testing.testkontur.ru&quot;</span><span class="s3">);</span>
+                <span class="s1">Thread</span><span class="s3">.</span><span class="s1">Sleep</span><span class="s3">(</span><span class="s5">3000</span><span class="s3">);</span>
+                
+                <span class="s0">// ввести логин/пароль</span>
+                <span class="s1">var login </span><span class="s3">= </span><span class="s1">driver</span><span class="s3">.</span><span class="s1">FindElement</span><span class="s3">(</span><span class="s1">By</span><span class="s3">.</span><span class="s1">Id</span><span class="s3">(</span><span class="s4">&quot;Username&quot;</span><span class="s3">));</span>
+                <span class="s1">login</span><span class="s3">.</span><span class="s1">SendKeys</span><span class="s3">(</span><span class="s4">&quot;ldr@skbkontur.ru&quot;</span><span class="s3">);</span>
+
+                <span class="s1">var password </span><span class="s3">= </span><span class="s1">driver</span><span class="s3">.</span><span class="s1">FindElement</span><span class="s3">(</span><span class="s1">By</span><span class="s3">.</span><span class="s1">Name</span><span class="s3">(</span><span class="s4">&quot;Password&quot;</span><span class="s3">));</span>
+                <span class="s1">password</span><span class="s3">.</span><span class="s1">SendKeys</span><span class="s3">(</span><span class="s4">&quot;2109721,Fhcbr7&quot;</span><span class="s3">);</span>
+                
+                <span class="s1">Thread</span><span class="s3">.</span><span class="s1">Sleep</span><span class="s3">(</span><span class="s5">3000</span><span class="s3">);</span>
+                
+                <span class="s0">// нажать на кнопку войти</span>
+                <span class="s1">var enter </span><span class="s3">= </span><span class="s1">driver</span><span class="s3">.</span><span class="s1">FindElement</span><span class="s3">(</span><span class="s1">By</span><span class="s3">.</span><span class="s1">Name</span><span class="s3">(</span><span class="s4">&quot;button&quot;</span><span class="s3">));</span>
+                <span class="s1">enter</span><span class="s3">.</span><span class="s1">Click</span><span class="s3">();</span>
+                
+                <span class="s1">Thread</span><span class="s3">.</span><span class="s1">Sleep</span><span class="s3">(</span><span class="s5">3000</span><span class="s3">);</span>
+                
+                <span class="s0">// проверяем что на нужном URL</span>
+                <span class="s1">var currentUrl </span><span class="s3">= </span><span class="s1">driver</span><span class="s3">.</span><span class="s1">Url</span><span class="s3">;</span>
+                <span class="s1">Assert</span><span class="s3">.</span><span class="s1">That</span><span class="s3">(</span><span class="s1">currentUrl </span><span class="s3">== </span><span class="s4">&quot;https://staff-testing.testkontur.ru/news&quot;</span><span class="s3">);</span>
+                
+                <span class="s0">// хотим закрыть браузер после проверки и убиваем процесс драйвера</span>
+                <span class="s1">driver</span><span class="s3">.</span><span class="s1">Quit</span><span class="s3">();</span>
+            <span class="s3">}</span>
+        <span class="s3">}</span></pre>
+</body>
+</html>
