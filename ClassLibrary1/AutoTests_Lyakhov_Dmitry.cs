@@ -16,152 +16,112 @@ namespace AutoTest_Lyakhov_Dmitry;
         public class Авторизация
         {
             public ChromeDriver driver;
+
+            [SetUp]
+            public void Setup_Auth()
+            {
+                Authorization();
+            }
             
             [Test]
             public void Auth()
+            // проверка авторизации
             {
-                Authorization();
+                var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(3));
+                wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("[data-tid='PageHeader']")));
                 
-                Thread.Sleep(3000);
-                
-                // проверяем что на нужном URL
                 var currentUrl = driver.Url;
-                Assert.That(currentUrl == "https://staff-testing.testkontur.ru/news");
+                Assert.That(currentUrl == "https://staff-testing.testkontur.ru/news"
+                    , "мы ожидали получить https://staff-testing.testkontur.ru/news, а получили" + currentUrl);
                 
             }
 
             [Test]
             public void Create_folder()
+            // проверка открытия модалки создания папки
             {
-                Authorization();
-                Thread.Sleep(3000);
+                var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(3));
+                wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("[data-tid='PageHeader']")));
                 
                 driver.Navigate().GoToUrl("https://staff-testing.testkontur.ru/files");
-                Thread.Sleep(2000);
+                wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("[data-tid='DropdownButton']")));
+                
                 var add = driver.FindElement(By.ClassName("react-ui-1f3jmd3"));
                 add.Click();
-                Thread.Sleep(1000);
-                 
+                
                 var folder = driver.FindElement(By.CssSelector("[data-tid='CreateFolder']"));
                 folder.Click();
-                Thread.Sleep(1000);
-                
-                var namefolder = driver.FindElement(By.CssSelector("[placeholder='Новая папка']"));
-                namefolder.SendKeys("New");
-                Thread.Sleep(1000);
-                
-                var savefolder = driver.FindElement(By.CssSelector("[data-tid='SaveButton']"));
-                savefolder.Click();
-                Thread.Sleep(1000);
                 
                 var check = driver.FindElement(By.CssSelector("[data-tid='modal-content']"));
-                if (check == null) Assert.That(true);
-                //проверка на отстуствие модалки создания папки (знаю, странная проверка, надо бы на наличие созданной папки, но пока не понял как это делать)
+                check.Should().NotBeNull();
 
             }
             
             [Test]
             public void Select_date()
+                // проверяем, что в настройках профиля, в поле выбора даты рождения открывается календарь
             {
-                Authorization();
-                //driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(2);
-                
-                Thread.Sleep(2000); 
+                var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(3));
+                wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("[data-tid='PageHeader']")));
                 driver.Navigate().GoToUrl("https://staff-testing.testkontur.ru/profile/settings/edit");
                 
-                Thread.Sleep(2000); 
+                wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("[data-tid='Birthday']")));
                 var datafield = driver.FindElement(By.CssSelector("[inputmode='numeric']"));
                 datafield.Click();
                 
-                Thread.Sleep(2000); 
-                
-                // проверяем что календарь открывается
                 var dataopen = driver.FindElement(By.CssSelector("[data-tid='MonthView__month']"));
-                if (dataopen != null) Assert.That(true);
-                //возможно, как-то по другому проверку на наличие элемента делать надо, но вроде работает
-                
-                
-                
-                
+                dataopen.Should().NotBeNull();
             }
             
             [Test]
             public void NewYearThemeOn()
+            // проверка, что новогодняя тема включается (по умолчанию отключена после авторизации)
             {
-                Authorization();
-                //driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(2);
-                
-                Thread.Sleep(2000);                 
+                var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(3));
+                wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("[data-tid='PageHeader']")));               
                 var avatar = driver.FindElement(By.CssSelector("[data-tid='Avatar']"));
                 avatar.Click();
                 
-                Thread.Sleep(2000);
+                wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("[data-tid='Settings']"))); 
                 var settings = driver.FindElement(By.CssSelector("[data-tid='Settings']"));
                 settings.Click();
                 
-                Thread.Sleep(2000);
-                //нажатие на тогл (приходится браться за class, понимаю что плохой вариант, но другого кликабельного элемента нет)
+                wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("[data-tid='SettingsHotkeys']"))); 
                 var toggle = driver.FindElement(By.CssSelector("[class='react-ui-1jxed06']"));
                 toggle.Click();
                 
-                Thread.Sleep(2000);
+                wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("[data-tid='SettingsHotkeys']")));
                 var save = driver.FindElement(By.CssSelector("[class='react-ui-1m5qr6w']"));
                 save.Click();
                 
-                Thread.Sleep(3000);
+                wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("[data-tid='PageHeader']")));
                 
-                // проверяем что включено
-                var newyeartheme = driver.FindElement(By.CssSelector("[class='sc-dvUynV eIUTfe']"));
-                if (newyeartheme != null) Assert.That(true);
-                // также вопрос, корректная ли проверка
+                // проверяем что новогодняя тема включена (есть картинка в фоне)
+                var newyeartheme = driver.FindElement(By.CssSelector("[class='sc-kizEQm sc-kmIPcE irzWzB htFMXJ']"));
+                newyeartheme.Should().NotBeNull();
                 
             }
             
             [Test]
             public void ChangePassword()
-            
+            // проверка валидации при пустом поле для старого пароля (выходит сообщение "поле не должно быть пустым")
             {
-                Authorization();
-                //driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(2);
-                
-                Thread.Sleep(2000); 
+                var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(3));
+                wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("[data-tid='PageHeader']")));
                 driver.Navigate().GoToUrl("https://staff-testing.testkontur.ru/security");
                 
-                Thread.Sleep(2000);
-                //кнопка изменить пароль
+                wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("[data-tid='ResetPassword']")));
                 var buttonpassword = driver.FindElement(By.CssSelector("[data-tid='ResetPassword']"));
                 buttonpassword.Click();
                 
-                Thread.Sleep(2000);
-                
-                //здесь я пытался объявить элемент, который нужно будет находить (он одинаковый для нескольких полей)
-                IWebElement textField = driver.FindElement(By.CssSelector("[type='password']"));
-                IWebElement textField1 = driver.FindElement(By.CssSelector("[type='password']"));
-                IWebElement textField2 = driver.FindElement(By.CssSelector("[type='password']"));
+                wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("[data-tid='modal-content']")));
                 
                 var oldpassword = driver.FindElement(By.CssSelector("[data-tid='OldPassword']"));
                 oldpassword.Click();
-                //IWebDriver textfield = driver.FindElement(By.Name("password"));
-                Thread.Sleep(1000);
-                textField.SendKeys("2109721,Fhcbr7");
-                
-                Thread.Sleep(2000);
-
-                var newpassword = driver.FindElement(By.CssSelector("[data-tid='NewPassword']"));
+                var newpassword = driver.FindElement(By.CssSelector("[data-tid='PasswordInputEyeIcon']"));
                 newpassword.Click();
-                Thread.Sleep(1000);
-                textField1.SendKeys("2109721,Fhcbr8");
-                
-                Thread.Sleep(2000);
-                
-                var repeatpassword = driver.FindElement(By.CssSelector("[data-tid='RepeatPassword']"));
-                repeatpassword.Click();
-                Thread.Sleep(1000);
-                textField2.SendKeys("2109721,Fhcbr8");
-                // все это записывает почему-то в одно поле со старым паролем
-
-                var checksave = driver.FindElement(By.CssSelector("[class='react-ui-m0adju']"));
-                if (checksave != null) Assert.That(true);
+                var checksave = driver.FindElement(By.CssSelector("[data-tid='PopupContent']"));
+                checksave.Should().NotBeNull();
             }
 
             public void Authorization()
@@ -177,10 +137,6 @@ namespace AutoTest_Lyakhov_Dmitry;
                 // перейти по URL
                 driver.Navigate().GoToUrl("https://staff-testing.testkontur.ru");
                 
-                //пример явного ожидания (ждем 3 сек пока не появится эелемент с id username) - 2 строчки
-                //var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(3));
-                //wait.Until(ExpectedConditions.ElementIsVisible(By.Id("Username")));
-                
                 // ввести логин/пароль
                 var login = driver.FindElement(By.Id("Username"));
                 login.SendKeys("ldr@skbkontur.ru");
@@ -188,13 +144,11 @@ namespace AutoTest_Lyakhov_Dmitry;
                 var password = driver.FindElement(By.Name("Password"));
                 password.SendKeys("2109721,Fhcbr7");
                 
-                //Thread.Sleep(3000);
-                
                 // нажать на кнопку войти
                 var enter = driver.FindElement(By.Name("button"));
                 enter.Click();
             }
-
+            
             //закрываем браузер и убиваем процесс
             [TearDown]
             public void TearDown()
